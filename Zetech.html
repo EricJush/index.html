@@ -1,0 +1,222 @@
+<?php
+include 'config.php';
+
+// Query to fetch lab status
+$lab_sql = "SELECT * FROM computer_labs";
+$labs_result = mysqli_query($conn, $lab_sql);
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zetech Computer Lab Booking System</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hero-pattern {
+            background-color: #1a237e;
+            background-image: linear-gradient(315deg, #1a237e 0%, #4a148c 74%);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <!-- Logo -->
+                    <img src="https://elearning.zetech.ac.ke/pluginfile.php/1/theme_edutor/logo/1727861548/Portrait%20Logo%20282C%20%281%29.png" alt="Zetech Logo" class="h-10 mr-3">
+                    <div class="text-2xl font-bold text-blue-900">
+                        Zetech Lab Booking
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#" class="text-gray-700 hover:text-blue-900 px-3 py-2">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-900 px-3 py-2" id="book-computer">Book Computer</a>
+                    <a href="#help" class="text-gray-700 hover:text-blue-900 px-3 py-2">Help</a>
+                    <a href="student_login.php" class="bg-blue-900 text-white px-4 py-2 rounded-md">Student Login</a>
+                    <a href="login.php" class="bg-blue-900 text-white px-4 py-2 rounded-md">Lecturer Login</a>
+                </div>
+                <!-- Hamburger Menu -->
+                <div class="md:hidden">
+                    <button id="menu-button" class="text-gray-700 hover:text-blue-900 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="flex flex-col space-y-2 px-4 py-2">
+                <a href="#" class="text-gray-700 hover:text-blue-900">Home</a>
+                <a href="#" class="text-gray-700 hover:text-blue-900" id="book-computer">Book Computer</a>
+                <a href="#help" class="text-gray-700 hover:text-blue-900">Help</a>
+                <a href="student_login.php" class="bg-blue-900 text-white px-4 py-2 rounded-md">Student Login</a>
+                <a href="login.php" class="bg-blue-900 text-white px-4 py-2 rounded-md">Lecturer Login</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <div class="hero-pattern">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold text-white sm:text-5xl">
+                    Computer Lab Booking System
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-200 sm:text-lg">
+                    Book your computer lab session easily and efficiently
+                </p>
+                <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center">
+                    <div class="rounded-md shadow">
+                        <a href="#" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-900 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10" id="book-now">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Status Overview -->
+    <div class="max-w-7xl mx-auto py-8 px-4">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Current Lab Availability</h2>
+            <h2 class="text-xl font-bold text-blue-800 mb-5">Nairobi Town Campus</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <?php while ($lab = mysqli_fetch_assoc($labs_result)): ?>
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-bold text-lg"><?php echo htmlspecialchars($lab['lab_name']); ?></h3>
+                        <h3 class="font-small text-sm"><?php echo htmlspecialchars($lab['description']); ?></h3>
+                        <p class="<?php echo ($lab['status'] === 'available') ? 'text-green-600' : 'text-red-600'; ?>">
+                            <?php echo ($lab['status'] === 'available') ? 'Available: ' . htmlspecialchars($lab['capacity']) . ' computers' : 'Full: 0 computers'; ?>
+                        </p>
+                        <p class="text-sm text-gray-600">Open: 8:00 AM - 05:00 PM</p>
+                    </div>
+
+                <?php endwhile; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Rules and Information -->
+    <div class="max-w-7xl mx-auto py-8 px-4" id="help">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Lab Rules</h2>
+                <ul class="space-y-2 text-gray-600">
+                    <li>• Student ID required for check-in</li>
+                    <li>• No food or drinks allowed</li>
+                    <li>• Maximum booking duration: 3 hours</li>
+                    <li>• Cancel bookings at least 1 hour before</li>
+                    <li>• Save your work on personal storage</li>
+                </ul>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Need Help?</h2>
+                <p class="text-gray-600 mb-4">Contact lab administrators for assistance:</p>
+                <ul class="space-y-2 text-gray-600">
+                    <li>Email: labs@zetech.ac.ke</li>
+                    <li>Phone: +254 XXX XXX XXX</li>
+                    <li>Location: Admin Block, Ground Floor</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="loginModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 justify-center items-center">
+        <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Login Required</h2>
+            <p class="text-gray-600 mb-4">Please log in to book a computer.</p>
+            <div class="flex justify-end">
+                <button href="login.php" id="closeModal" class="bg-blue-900 text-white px-4 py-2 rounded-md">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white mt-8">
+        <div class="max-w-7xl mx-auto py-8 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold">Contact Support</h3>
+                    <p class="mt-2">Email: labs@zetech.ac.ke</p>
+                    <p>Phone: +254 XXX XXX XXX</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold">Quick Links</h3>
+                    <ul class="mt-2 space-y-2">
+                        <li><a href="#" class="hover:text-gray-300">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-gray-300">Booking History</a></li>
+                        <li><a href="#" class="hover:text-gray-300">Lab Rules</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold">Operating Hours</h3>
+                    <p class="mt-2">Monday - Friday: 8:00 AM - 8:00 PM</p>
+                    <p>Saturday: 8:00 AM - 1:00 PM</p>
+                    <p>Sunday: Closed</p>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p>&copy; 2024 Zetech Computer Lab Booking System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Get modal element
+        const modal = document.getElementById('loginModal');
+        const bookNowButton = document.getElementById('book-now');
+        const bookComputerLink = document.getElementById('book-computer');
+        const closeModalButton = document.getElementById('closeModal');
+
+        // Function to open the modal
+        function openModal() {
+            modal.classList.remove('hidden');
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Event listeners
+        bookNowButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            openModal();
+        });
+
+        bookComputerLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            openModal();
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+    </script>
+</body>
+
+</html>
